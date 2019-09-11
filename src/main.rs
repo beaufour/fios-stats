@@ -24,7 +24,7 @@ extern crate simple_error;
 
 use clap::{App, Arg};
 use env_logger::{Env};
-use log::debug;
+use log::{debug, info};
 use reqwest;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -114,7 +114,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let tx = data["bandwidth"]["minutesTx"][0].as_u64().unwrap() * 8;
     let errors = data["rxErrors"].as_u64().unwrap() * 8;
     let dropped = data["rxDropped"].as_u64().unwrap() * 8;
-    println!("Data: rx = {}, tx = {}, errors = {}, dropped = {}", rx, tx, errors, dropped);
+    info!("Data: rx = {}, tx = {}, rx errors = {}, rx dropped = {}", rx, tx, errors, dropped);
 
     // TODO: there's also natEntriesUsed from /api/settings/system, which might be interesting to pull
 
