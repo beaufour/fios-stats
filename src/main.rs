@@ -55,10 +55,12 @@ struct AuthInfo {
 
 const BASE_URI:&str = "https://myfiosgateway.com/api/";
 
+const VERSION: &'static str = env!("CARGO_PKG_VERSION");
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = App::new("Fios Gateway Stats Retriever")
-        .version("0.1.0")
+        .version(VERSION)
         .author("Allan Beaufour <allan@beaufour.dk>")
         .arg(Arg::with_name("password")
              .short("p")
