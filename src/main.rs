@@ -57,7 +57,7 @@ const BASE_URI:&str = "https://myfiosgateway.com/api/";
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let matches = App::new("Fios Gateway Stats Retriever")
+    let args = App::new("Fios Gateway Stats Retriever")
         .version("0.1.0")
         .author("Allan Beaufour <allan@beaufour.dk>")
         .arg(Arg::with_name("password")
@@ -72,11 +72,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
              .long("influxdb")
              .value_name("URI")
              .help("URI to InfluxDB including databasename")
-             .required(true)
              .takes_value(true))
         .get_matches();
-    let password = matches.value_of("password").unwrap();
-    let influx_db = matches.value_of("influx_db").unwrap();
+    let password = args.value_of("password").unwrap();
 
     let env = Env::default()
         .filter_or("MY_LOG_LEVEL", "info")
@@ -120,17 +118,19 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // TODO: there's also natEntriesUsed from /api/settings/system, which might be interesting to pull
 
-    let mut influx_map = HashMap::new();
-    influx_map.insert("net_tx", tx);
-    influx_map.insert("net_rx", rx);
-    influx_map.insert("net_rx_errors", errors);
-    influx_map.insert("net_rx_dropped", dropped);
-    let influx_data = influx_map.iter().fold(String::new(), |mut acc, (key, val)| {
-        acc.push_str(&format!("{},host=myfiosgateway.com value={}i\n", key, val));
-        acc
-    });
-    debug!("Influx data:\n{}", influx_data);
-    save_data(&client, influx_db, influx_data)?;
+    if let Some(influx_db) = args.value_of("influx_db") {
+        let mut influx_map = HashMap::new();
+        influx_map.insert("net_tx", tx);
+        influx_map.insert("net_rx", rx);
+        influx_map.insert("net_rx_errors", errors);
+        influx_map.insert("net_rx_dropped", dropped);
+        let influx_data = influx_map.iter().fold(String::new(), |mut acc, (key, val)| {
+            acc.push_str(&format!("{},host=myfiosgateway.com value={}i\n", key, val));
+            acc
+        });
+        debug!("Influx data:\n{}", influx_data);
+        save_data(&client, influx_db, influx_data)?;
+    }
 
     fetch_api(&authed_client, "logout")?;
 
