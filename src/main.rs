@@ -16,7 +16,6 @@
 
 // TODO
 // * add tests
-// * add Travis, https://docs.travis-ci.com/user/languages/rust/
 // * nicer error handling. At least for: 1) unexpected data in /network/1 return, and 2) auth errors
 
 #[macro_use]

@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/beaufour/fios-stats.svg)](https://travis-ci.org/beaufour/fios-stats)
+
 Simple program to fetch stats from the Fios Quantum Gateway router.
 
 Usage:
