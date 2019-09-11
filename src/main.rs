@@ -130,6 +130,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         });
         debug!("Influx data:\n{}", influx_data);
         save_data(&client, influx_db, influx_data)?;
+
+        info!("Data stored to InfluxDB");
     }
 
     fetch_api(&authed_client, "logout")?;
